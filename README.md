@@ -17,18 +17,23 @@
 | Is the key to success, indeed. |
 | Like [Go Proverbs - Simple, Poetic, Pithy](https://go-proverbs.github.io/) |
 
-[![Build Status SemaphoreCI](https://semaphoreci.com/api/v1/containous/traefik/branches/master/shields_badge.svg)](https://semaphoreci.com/containous/traefik)
-[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://doc.traefik.io/traefik)
-[![Go Report Card](https://goreportcard.com/badge/traefik/traefik)](https://goreportcard.com/report/traefik/traefik)
+[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://pkg.go.dev/github.com/davidaparicio/cuc)
+[![Go Report Card](https://goreportcard.com/badge/davidaparicio/cuc)](https://goreportcard.com/report/davidaparicio/cuc)
+[![Github](https://img.shields.io/static/v1?label=github&logo=github&color=E24329&message=main&style=flat-square)](https://github.com/davidaparicio/cuc)
 [![GitLab](https://img.shields.io/static/v1?label=gitlab&logo=gitlab&color=E24329&message=main&style=flat-square)](https://gitlab.com/davidaparicio/cuc)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/cuc/blob/master/LICENSE.md)
-[![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
+[![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/cuc)
 [![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
 
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/cuc/blob/master/LICENSE.md)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc?ref=badge_shield)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_cuc&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_cuc)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_cuc&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_cuc)
+[![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
+
 CUC (English pronunciation: [_cuc_] / λευκός) is a very simple CLI tool to check various HTTP status for example if a webpage is available (200) or not found (404).
 
-> Campinas (Portuguese pronunciation: [kɐ̃ˈpinɐs], Plains or Meadows) is a Brazilian municipality in São Paulo State, part of the country's Southeast Region. According to the 2020 estimate, the city's metropolitan area, contains twenty municipalities with a total population of 3,656,363 people, making it the fourteenth most populous Brazilian city and the third most populous municipality in São Paulo state. (Source: Wikipedia)
+> It's delicious like a [TUC](https://en.wikipedia.org/wiki/TUC_(cracker)) (cracker), Biscuit of the French company LU, but with a C, for the [Console](https://en.wikipedia.org/wiki/Command-line_interface).
 
 ---
 
@@ -50,6 +55,17 @@ CUC (English pronunciation: [_cuc_] / λευκός) is a very simple CLI tool to
 ## Overview
 
 ## Quickstart
+
+If you have already ```Docker``` installed on your laptop
+
+```docker run davidaparicio/cuc:<TAG/VERSION_LIKE_v0.0.5> -u <WEBSITE_TO_CHECK> -c 200 -f <PATH_TO_AUDIO_FILE>```
+
+If not, you need ```Go``` and all dependencies
+
+```CGO_ENABLED=1 go run ./main.go https://www.example.com/ loop --URL -s 10 -c 200 -f assets/mp3/ubuntu_dialog_info.mp3```
+
+For more information, you can see [examples here](EXAMPLES.md)
+
 
 ## Credits
 
