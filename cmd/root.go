@@ -4,6 +4,7 @@ Copyright © 2023 David Aparicio david.aparicio@free.fr
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/davidaparicio/cuc/internal"
@@ -14,14 +15,14 @@ import (
 
 var (
 	logger *zap.Logger
-	//sugar     *zap.SugaredLogger
+	// sugar     *zap.SugaredLogger
 	verbose   bool
 	URL       string
 	musicFile string
 	timeout   int
 	backoff   int
 	httpCode  int
-	//cfgFile string
+	// cfgFile string
 	printVersion bool
 )
 
@@ -36,9 +37,9 @@ For example:
 If a concert ticket webpage is available (200), or not found (404).`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if printVersion {
-			internal.Print_Version()
+			internal.PrintVersion()
 		} else {
-			internal.Check_URL(URL, musicFile, timeout, httpCode, false, logger, cmd.Root().Context())
+			internal.CheckURL(URL, musicFile, timeout, httpCode, false, logger, cmd.Root().Context())
 		}
 	},
 }
@@ -53,32 +54,18 @@ func Execute() {
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
 	rootCmd.PersistentFlags().StringVarP(&URL, "URL", "u", "https://www.example.com/", "Webpage to check")
-	rootCmd.PersistentFlags().StringVarP(&musicFile, "musicFile", "f", "./assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
+	rootCmd.PersistentFlags().StringVarP(&musicFile,
+		"musicFile", "f", "./assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
 	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 1, "Timeout in seconds")
 	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", 200, "HTTP Status Code from 100 to 511")
-	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cuc.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "d", false, "Enables debug logging")
 	rootCmd.PersistentFlags().BoolVarP(&printVersion, "version", "v", false, "Print the version")
-
-	//rootCmd.InitDefaultHelpFlag()
-	//rootCmd.InitDefaultVersionFlag()
 
 	cobra.OnInitialize(initConfig)
 }
 
-// initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	//rand.Seed(int64(time.Now().Nanosecond()))
-
 	zapOptions := []zap.Option{
 		zap.AddStacktrace(zapcore.FatalLevel),
 		zap.AddCallerSkip(1),
@@ -88,41 +75,15 @@ func initConfig() {
 			zap.IncreaseLevel(zap.LevelEnablerFunc(func(l zapcore.Level) bool { return l != zapcore.DebugLevel })),
 		)
 	}
-	//l, _ := zap.NewDevelopment(zapOptions...)
 	l, _ := zap.NewProduction(zapOptions...)
-	defer l.Sync() // flushes buffer, if any
+	defer func() {
+		if err := l.Sync(); err != nil { // flushes buffer, if any
+			fmt.Println("Error during flushing all logger buffers (l.Sync())")
+		}
+	}()
 	// L returns the global Logger, which can be reconfigured with ReplaceGlobals.
 	// It's safe for concurrent use.
 	undo := zap.ReplaceGlobals(l)
 	defer undo()
 	logger = zap.L()
-	//logger.Info("replaced zap's global loggers")
-
-	/*if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-
-		// Search config in home directory with name ".cuc" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".cuc")
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
-	}*/
 }
-
-/*func logError(logger *zap.Logger, err error) error {
-	if err != nil {
-		logger.Error("Error running command", zap.Error(err))
-	}
-	return err
-}*/

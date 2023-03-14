@@ -1,4 +1,4 @@
-FROM alpine:latest as userland 
+FROM alpine:latest AS userland 
 RUN adduser -u 10001 nonroot --no-create-home
 
 #https://medium.com/@lizrice/non-privileged-containers-based-on-the-scratch-image-a80105d6d341
