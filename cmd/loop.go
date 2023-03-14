@@ -15,7 +15,7 @@ var loopCmd = &cobra.Command{
 	Long: `CUC is CLI tool to check various HTTP status.
 It will loop until the desired HTTP status is reached.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.Check_URL(URL, musicFile, backoff, httpCode, true, logger, cmd.Root().Context())
+		internal.Check_URL(URL, musicFile, timeout, httpCode, true, logger, cmd.Root().Context())
 	},
 }
 
@@ -27,6 +27,7 @@ func init() {
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
 	// loopCmd.PersistentFlags().Int("seconds", 30, "Backoff in seconds")
+	loopCmd.PersistentFlags().IntVarP(&backoff, "backoff", "b", 30, "Backoff in seconds")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
