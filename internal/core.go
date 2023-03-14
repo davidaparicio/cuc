@@ -100,7 +100,11 @@ func Check_URL(URL, musicFile string, backoff, httpCode int, loop bool, logger *
 				})))
 				<-done
 				if !loop {
-					defer resp.Body.Close()
+					defer func() {
+						if err := resp.Body.Close(); err != nil {
+							logger.Info("Error closing the http.NewRequest.body:", zap.Error(err))
+						}
+					}()
 					graceful_shutdown(logger, ctx)
 					return
 				}
@@ -112,7 +116,11 @@ func Check_URL(URL, musicFile string, backoff, httpCode int, loop bool, logger *
 					zap.String("url", URL),
 				)
 			}
-			defer resp.Body.Close()
+			defer func() {
+				if err := resp.Body.Close(); err != nil {
+					logger.Info("Error closing the http.NewRequest.body:", zap.Error(err))
+				}
+			}()
 			attempt++
 		case <-ctx.Done():
 			graceful_shutdown(logger, ctx)
