@@ -18,9 +18,11 @@ var (
 	verbose   bool
 	URL       string
 	musicFile string
+	timeout   int
 	backoff   int
 	httpCode  int
 	//cfgFile string
+	printVersion bool
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -33,16 +35,11 @@ For example:
 
 If a concert ticket webpage is available (200), or not found (404).`,
 	Run: func(cmd *cobra.Command, args []string) {
-		/*URL, err1 := cmd.Flags().GetString("URL")
-		musicFile, err2 := cmd.Flags().GetString("musicFile")
-		backoff, err3 := cmd.Flags().GetInt("seconds")
-		want, err4 := cmd.Flags().GetInt("httpCode")
-
-		if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-			log.Fatal("Can't parse args")
-		}*/
-
-		internal.Check_URL(URL, musicFile, backoff, httpCode, false, logger, cmd.Root().Context())
+		if printVersion {
+			internal.Print_Version()
+		} else {
+			internal.Check_URL(URL, musicFile, timeout, httpCode, false, logger, cmd.Root().Context())
+		}
 	},
 }
 
@@ -62,14 +59,18 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(&URL, "URL", "u", "https://www.example.com/", "Webpage to check")
 	rootCmd.PersistentFlags().StringVarP(&musicFile, "musicFile", "f", "./assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
-	rootCmd.PersistentFlags().IntVarP(&backoff, "seconds", "s", 30, "Backoff in seconds")
+	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 1, "Timeout in seconds")
 	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", 200, "HTTP Status Code from 100 to 511")
 	//rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cuc.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enables debug logging")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "d", false, "Enables debug logging")
+	rootCmd.PersistentFlags().BoolVarP(&printVersion, "version", "v", false, "Print the version")
+
+	//rootCmd.InitDefaultHelpFlag()
+	//rootCmd.InitDefaultVersionFlag()
 
 	cobra.OnInitialize(initConfig)
 }
