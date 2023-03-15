@@ -8,6 +8,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	Backoff = 30
+)
+
 // loopCmd represents the loop command
 var loopCmd = &cobra.Command{
 	Use:   "loop",
@@ -17,19 +21,4 @@ It will loop until the desired HTTP status is reached.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		internal.CheckURL(URL, musicFile, timeout, httpCode, true, logger, cmd)
 	},
-}
-
-func init() {
-	rootCmd.AddCommand(loopCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// loopCmd.PersistentFlags().Int("seconds", 30, "Backoff in seconds")
-	loopCmd.PersistentFlags().IntVarP(&backoff, "backoff", "b", 30, "Backoff in seconds")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// loopCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

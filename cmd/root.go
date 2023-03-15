@@ -13,6 +13,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	Timeout  = 1
+	HTTPCode = 200
+)
+
 var (
 	logger *zap.Logger
 	// sugar     *zap.SugaredLogger
@@ -53,14 +58,20 @@ func Execute() {
 	}
 }
 
+//nolint:gochecknoinits
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&URL, "URL", "u", "https://www.example.com/", "Webpage to check")
 	rootCmd.PersistentFlags().StringVarP(&musicFile,
 		"musicFile", "f", "../assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
-	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 1, "Timeout in seconds")
-	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", 200, "HTTP Status Code from 100 to 511")
+	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", Timeout, "Timeout in seconds")
+	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", HTTPCode, "HTTP Status Code from 100 to 511")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "d", false, "Enables debug logging")
 	rootCmd.PersistentFlags().BoolVarP(&printVersion, "version", "v", false, "Print the version")
+
+	rootCmd.AddCommand(loopCmd)
+	loopCmd.PersistentFlags().IntVarP(&backoff, "backoff", "b", Backoff, "Backoff in seconds")
+
+	rootCmd.AddCommand(versionCmd)
 
 	cobra.OnInitialize(initConfig)
 }
