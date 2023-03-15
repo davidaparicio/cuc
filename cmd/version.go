@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+Copyright © 2023 David Aparicio david.aparicio@free.fr
 */
 package cmd
 
@@ -14,7 +14,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version",
 	Long:  `Print the CUC version`,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.PrintVersion()
+		internal.PrintVersion(cmd)
 	},
 }
 

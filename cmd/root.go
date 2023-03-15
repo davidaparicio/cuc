@@ -37,9 +37,9 @@ For example:
 If a concert ticket webpage is available (200), or not found (404).`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if printVersion {
-			internal.PrintVersion()
+			internal.PrintVersion(cmd)
 		} else {
-			internal.CheckURL(URL, musicFile, timeout, httpCode, false, logger, cmd.Root().Context())
+			internal.CheckURL(URL, musicFile, timeout, httpCode, false, logger, cmd)
 		}
 	},
 }
@@ -56,7 +56,7 @@ func Execute() {
 func init() {
 	rootCmd.PersistentFlags().StringVarP(&URL, "URL", "u", "https://www.example.com/", "Webpage to check")
 	rootCmd.PersistentFlags().StringVarP(&musicFile,
-		"musicFile", "f", "./assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
+		"musicFile", "f", "../assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
 	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", 1, "Timeout in seconds")
 	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", 200, "HTTP Status Code from 100 to 511")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "d", false, "Enables debug logging")

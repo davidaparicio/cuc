@@ -1,9 +1,11 @@
+/*
+Copyright © 2023 David Aparicio david.aparicio@free.fr
+*/
 package internal
 
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,41 +15,42 @@ import (
 	"github.com/faiface/beep"
 	"github.com/faiface/beep/mp3"
 	"github.com/faiface/beep/speaker"
+	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
 
 // Version,GitCommit,BuiltDate are set at build-time
 var Version = "v0.0.1-SNAPSHOT"
 var GitCommit = "54a8d74ea3cf6fdcadfac10ee4a4f2553d4562f6q"
-var BuiltDate = "Thu Jan  1 01:00:00 CET 1970" //date -r 0 (Mac), date -d @0 (Linux)
+var BuildDate = "Thu Jan  1 01:00:00 CET 1970" //date -r 0 (Mac), date -d @0 (Linux)
 
-func PrintVersion() {
-	fmt.Printf("Client: CUC - Community\nVersion: \t%s\nGit commit: \t%s\nBuilt: \t\t%s\n", Version, GitCommit, BuiltDate)
+func PrintVersion(cmd *cobra.Command) {
+	cmd.Printf("Client: CUC - Community\nVersion: \t%s\nGit commit: \t%s\nBuilt: \t\t%s\n", Version, GitCommit, BuildDate)
 }
 
-func CheckURL(URL, musicFile string, backoff, httpCode int, loop bool, logger *zap.Logger, ctx context.Context) {
+func CheckURL(URL, musicFile string, backoff, httpCode int, loop bool, logger *zap.Logger, cmd *cobra.Command) {
 	var attempt int = 1
 
-	ctx, cancel := context.WithCancel(ctx)
+	ctx, cancel := context.WithCancel(cmd.Root().Context())
 
 	client := &http.Client{}
 
 	// #nosec [G304] [-- Acceptable risk, for the CWE-22]
 	f, err := os.Open(musicFile)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Not possible to open the file", zap.String("os.Open err", err.Error()))
 	}
 
 	streamer, format, err := mp3.Decode(f)
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Not possible to decode the MP3 file", zap.String("mp3.Decode err", err.Error()))
 	}
 
 	// ../../../../go/pkg/mod/github.com/hajimehoshi/oto@v1.0.1/context.go:69:12: undefined: newDriver
 	// To fix this error, we need to enable CGO_ENABLED=1
 	err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Not possible to init the speaker", zap.String("speaker.Init err", err.Error()))
 	}
 
 	//https://github.com/faiface/beep/wiki/To-buffer,-or-not-to-buffer,-that-is-the-question
@@ -55,7 +58,7 @@ func CheckURL(URL, musicFile string, backoff, httpCode int, loop bool, logger *z
 	buffer.Append(streamer)
 	err = streamer.Close()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("Not possible to close the streamer", zap.String("streamer.Close err", err.Error()))
 	}
 
 	// Graceful shutdown goroutine
