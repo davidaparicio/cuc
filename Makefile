@@ -120,3 +120,23 @@ lint: ## Runs the linter
 .PHONY: check-editorconfig
 check-editorconfig: ## Use to check if the codebase follows editorconfig rules
 	@docker run --rm --volume=$(shell PWD):/check mstruebing/editorconfig-checker
+
+.PHONY: doc
+doc: ## Launch the offline Go documentation 📚
+	@echo "open http://127.0.0.1:6060 and run godoc server..."
+	open "http://127.0.0.1:6060"
+	godoc -http=:6060 -play
+
+.PHONY: fuzz
+fuzz: ## Run fuzzing tests 🌀
+	@echo "Fuzzing..."
+#	go test -v -fuzz "Fuzz" -fuzztime 15s
+
+.PHONY: benchmark
+benchmark: ## Run benchmark tests 🚄
+	@echo "Benchmarking..."
+	go test -v -run=^$ -bench . -benchmem -benchtime=10s ./
+
+.PHONY: sec
+sec: ## Golang Security checks code for security problems 🔒
+	gosec ./...

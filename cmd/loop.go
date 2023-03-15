@@ -19,6 +19,6 @@ var loopCmd = &cobra.Command{
 	Long: `CUC is CLI tool to check various HTTP status.
 It will loop until the desired HTTP status is reached.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		internal.CheckURL(URL, musicFile, timeout, httpCode, true, logger, cmd)
+		internal.CheckURL(url, musicFile, timeout, httpCode, true, logger, cmd)
 	},
 }

@@ -17,13 +17,14 @@
 | Is the key to success, indeed. |
 | Like [Go Proverbs - Simple, Poetic, Pithy](https://go-proverbs.github.io/) |
 
-[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://pkg.go.dev/github.com/davidaparicio/cuc)
 [![Go Report Card](https://goreportcard.com/badge/davidaparicio/cuc)](https://goreportcard.com/report/davidaparicio/cuc)
+[![GoDoc](https://pkg.go.dev/badge/github.com/davidaparicio/cuc?status.svg)](https://pkg.go.dev/github.com/davidaparicio/cuc)
 [![Github](https://img.shields.io/static/v1?label=github&logo=github&color=E24329&message=main&style=flat-square)](https://github.com/davidaparicio/cuc)
-[![GitLab](https://img.shields.io/static/v1?label=gitlab&logo=gitlab&color=E24329&message=main&style=flat-square)](https://gitlab.com/davidaparicio/cuc)
-[![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/cuc)
+[![Docker Pulls](https://img.shields.io/docker/pulls/davidaparicio/cuc.svg)](https://hub.docker.com/r/davidaparicio/cuc)
 [![Maintenance](https://img.shields.io/maintenance/yes/2023.svg)]()
 
+<!-- [![GitLab](https://img.shields.io/static/v1?label=gitlab&logo=gitlab&color=E24329&message=main&style=flat-square)](https://gitlab.com/davidaparicio/cuc) -->
+<!-- [![Froggit](https://img.shields.io/static/v1?label=froggit&logo=froggit&color=red&message=no&style=flat-square)](https://lab.frogg.it/davidaparicio/cuc) -->
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/cuc/blob/master/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc?ref=badge_shield)
@@ -37,6 +38,7 @@ CUC (English pronunciation: [_cuc_] / λευκός) is a very simple CLI tool to
 
 ---
 
+<!--
 . **[Overview](#overview)** .
 **[Features](#features)** .
 **[Supported backends](#supported-backends)** .
@@ -49,6 +51,11 @@ CUC (English pronunciation: [_cuc_] / λευκός) is a very simple CLI tool to
 **[Contributing](#contributing)** .
 **[Maintainers](#maintainers)** .
 **[Credits](#credits)** .
+-->
+
+. **[Overview](#overview)** .
+**[Quickstart](#quickstart)** .
+**[Credits](#credits)** .
 
 ---
 
@@ -56,16 +63,19 @@ CUC (English pronunciation: [_cuc_] / λευκός) is a very simple CLI tool to
 
 ## Quickstart
 
+<!-- 
 If you have already ```Docker``` installed on your laptop
 
 ```docker run davidaparicio/cuc:<TAG/VERSION_LIKE_v0.0.5> -u <WEBSITE_TO_CHECK> -c 200 -f <PATH_TO_AUDIO_FILE>```
 
-If not, you need ```Go``` and all dependencies
+If not,
+-->
+
+You need ```Go``` and all dependencies
 
 ```CGO_ENABLED=1 go run ./main.go https://www.example.com/ loop --URL -s 10 -c 200 -f assets/mp3/ubuntu_dialog_info.mp3```
 
 For more information, you can see [examples here](EXAMPLES.md)
-
 
 ## Credits
 

@@ -22,7 +22,7 @@ var (
 	logger *zap.Logger
 	// sugar     *zap.SugaredLogger
 	verbose   bool
-	URL       string
+	url       string
 	musicFile string
 	timeout   int
 	backoff   int
@@ -44,7 +44,7 @@ If a concert ticket webpage is available (200), or not found (404).`,
 		if printVersion {
 			internal.PrintVersion(cmd)
 		} else {
-			internal.CheckURL(URL, musicFile, timeout, httpCode, false, logger, cmd)
+			internal.CheckURL(url, musicFile, timeout, httpCode, false, logger, cmd)
 		}
 	},
 }
@@ -60,9 +60,9 @@ func Execute() {
 
 //nolint:gochecknoinits
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&URL, "URL", "u", "https://www.example.com/", "Webpage to check")
+	rootCmd.PersistentFlags().StringVarP(&url, "url", "u", "https://www.example.com/", "Webpage to check")
 	rootCmd.PersistentFlags().StringVarP(&musicFile,
-		"musicFile", "f", "../assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
+		"musicFile", "f", "./assets/mp3/ubuntu_desktop_login.mp3", "MP3 file to play if the check is successful")
 	rootCmd.PersistentFlags().IntVarP(&timeout, "timeout", "t", Timeout, "Timeout in seconds")
 	rootCmd.PersistentFlags().IntVarP(&httpCode, "httpCode", "c", HTTPCode, "HTTP Status Code from 100 to 511")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "d", false, "Enables debug logging")
@@ -78,23 +78,26 @@ func init() {
 
 func initConfig() {
 	zapOptions := []zap.Option{
-		zap.AddStacktrace(zapcore.FatalLevel),
+		//skip the first caller, which is typically the logger's own function
 		zap.AddCallerSkip(1),
+		zap.AddStacktrace(zapcore.FatalLevel),
 	}
-	if !verbose {
-		zapOptions = append(zapOptions,
-			zap.IncreaseLevel(zap.LevelEnablerFunc(func(l zapcore.Level) bool { return l != zapcore.DebugLevel })),
-		)
+	if !verbose { //level "debug" is not allowed by existing core
+		zapOptions = append(zapOptions, zap.IncreaseLevel(zapcore.FatalLevel))
 	}
-	l, _ := zap.NewProduction(zapOptions...)
-	defer func() {
-		if err := l.Sync(); err != nil { // flushes buffer, if any
-			fmt.Println("Error during flushing all logger buffers (l.Sync())")
-		}
-	}()
+	l, err := zap.NewProduction(zapOptions...)
+	if err != nil {
+		fmt.Println("Error during setting the Uber Zap logging")
+	}
 	// L returns the global Logger, which can be reconfigured with ReplaceGlobals.
 	// It's safe for concurrent use.
 	undo := zap.ReplaceGlobals(l)
-	defer undo()
 	logger = zap.L()
+
+	defer func() { // flushes buffer, if any
+		undo()
+		if err := logger.Sync(); err != nil {
+			fmt.Println("Error during flushing all logger buffers (l.Sync()): " + err.Error())
+		}
+	}()
 }

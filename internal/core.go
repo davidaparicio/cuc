@@ -114,16 +114,6 @@ func CheckURL(url, musicFile string, backoff, httpCode int, loop bool, logger *z
 	gracefulShutdown(logger, ctx)
 }
 
-func gracefulShutdown(logger *zap.Logger, ctx context.Context) {
-	if ctx.Err() == nil {
-		logger.Info("Graceful shutdown..")
-	} else {
-		logger.Info("Graceful shutdown..",
-			zap.String("ctx.err", ctx.Err().Error()),
-		)
-	}
-}
-
 func prepareMusic(musicFile string, logger *zap.Logger) (buffer *beep.Buffer, err error) {
 	// #nosec [G304] [-- Acceptable risk, for the CWE-22]
 	f, err := os.Open(musicFile)
@@ -155,4 +145,14 @@ func prepareMusic(musicFile string, logger *zap.Logger) (buffer *beep.Buffer, er
 		return nil, err
 	}
 	return buffer, nil
+}
+
+func gracefulShutdown(logger *zap.Logger, ctx context.Context) {
+	if ctx.Err() == nil {
+		logger.Info("Graceful shutdown..")
+	} else {
+		logger.Info("Graceful shutdown..",
+			zap.String("ctx.err", ctx.Err().Error()),
+		)
+	}
 }

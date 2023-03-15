@@ -18,7 +18,9 @@ type Test struct {
 }
 
 func ExecuteSuite(t *testing.T, tests []Test) {
-	t.Parallel()
+	// fatal error: concurrent map read and map write
+	// github.com/spf13/pflag.(*FlagSet).lookup(...)
+	// t.Parallel()
 	for _, test := range tests {
 		t.Run(test.Title, func(t *testing.T) {
 			output := &bytes.Buffer{}
