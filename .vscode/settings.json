@@ -1,0 +1,8 @@
+{
+  "go.testEnvVars": {
+      "CGO_ENABLED": 1,
+  },
+  // https://github.com/microsoft/vscode-go/issues/2398
+  //"go.testEnvFile": "${workspaceFolder}/.env",
+  "go.testFlags": ["-v"]
+}
