@@ -28,6 +28,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/davidaparicio/cuc/blob/master/LICENSE.md)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdavidaparicio%2Fcuc?ref=badge_shield)
+[![Known Vulnerabilities](https://snyk.io/test/github/davidaparicio/cuc/badge.svg)](https://snyk.io/test/github/davidaparicio/cuc)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_cuc&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=davidaparicio_cuc)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=davidaparicio_cuc&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=davidaparicio_cuc)
 [![Twitter](https://img.shields.io/twitter/follow/dadideo.svg?style=social)](https://twitter.com/intent/follow?screen_name=dadideo)
@@ -71,7 +72,7 @@ If you have already ```Docker``` installed on your laptop
 If not,
 -->
 
-You need ```Go``` and all dependencies
+You need ```Go``` and all [dependencies](https://deps.dev/go/github.com%2Fdavidaparicio%2Fcuc/v0.0.0-20230313221521-d867c87d3847/dependencies)
 
 ```CGO_ENABLED=1 go run ./main.go https://www.example.com/ loop --URL -s 10 -c 200 -f assets/mp3/ubuntu_dialog_info.mp3```
 

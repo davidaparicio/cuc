@@ -78,26 +78,25 @@ func init() {
 
 func initConfig() {
 	zapOptions := []zap.Option{
-		//skip the first caller, which is typically the logger's own function
+		// skip the first caller, which is typically the logger's own function
 		zap.AddCallerSkip(1),
 		zap.AddStacktrace(zapcore.FatalLevel),
 	}
-	if !verbose { //level "debug" is not allowed by existing core
+	if !verbose { // level "debug" is not allowed by existing core
 		zapOptions = append(zapOptions, zap.IncreaseLevel(zapcore.FatalLevel))
 	}
 	l, err := zap.NewProduction(zapOptions...)
 	if err != nil {
 		fmt.Println("Error during setting the Uber Zap logging")
 	}
-	// L returns the global Logger, which can be reconfigured with ReplaceGlobals.
-	// It's safe for concurrent use.
-	undo := zap.ReplaceGlobals(l)
-	logger = zap.L()
-
 	defer func() { // flushes buffer, if any
-		undo()
 		if err := logger.Sync(); err != nil {
 			fmt.Println("Error during flushing all logger buffers (l.Sync()): " + err.Error())
 		}
 	}()
+	// L returns the global Logger, which can be reconfigured with ReplaceGlobals.
+	// It's safe for concurrent use.
+	undo := zap.ReplaceGlobals(l)
+	logger = zap.L()
+	undo()
 }
