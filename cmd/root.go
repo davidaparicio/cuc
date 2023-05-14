@@ -4,8 +4,10 @@ Copyright © 2023 David Aparicio david.aparicio@free.fr
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
+	"syscall"
 
 	"github.com/davidaparicio/cuc/internal"
 	"github.com/spf13/cobra"
@@ -90,7 +92,12 @@ func initConfig() {
 		fmt.Println("Error during setting the Uber Zap logging")
 	}
 	defer func() { // flushes buffer, if any
-		if err := logger.Sync(); err != nil {
+		err := logger.Sync()
+		// NOTE: we use syscall.EBADF to check if the error is specifically related to a bad file descriptor,
+		// which should be the case for if the stderr is a TTY.
+		// https://github.com/uber-go/zap/issues/880#issuecomment-906074498
+		// https://github.com/uber-go/zap/issues/991#issuecomment-1485659915
+		if err != nil && (!errors.Is(err, syscall.EBADF) && !errors.Is(err, syscall.ENOTTY)) {
 			fmt.Println("Error during flushing all logger buffers (l.Sync()): " + err.Error())
 		}
 	}()

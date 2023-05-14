@@ -26,11 +26,11 @@ Available Commands:
   version     Print the version
 
 Flags:
-  -u, --URL string         Webpage to check (default "https://www.example.com/")
   -h, --help               help for cuc
   -c, --httpCode int       HTTP Status Code from 100 to 511 (default 200)
-  -f, --musicFile string   MP3 file to play if the check is successful (default "../assets/mp3/ubuntu_desktop_login.mp3")
+  -f, --musicFile string   MP3 file to play if the check is successful (default "./assets/mp3/ubuntu_desktop_login.mp3")
   -t, --timeout int        Timeout in seconds (default 1)
+  -u, --url string         Webpage to check (default "https://www.example.com/")
   -d, --verbose            Enables debug logging
   -v, --version            Print the version
 

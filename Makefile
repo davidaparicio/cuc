@@ -38,7 +38,7 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
-GORELEASER_FLAGS ?= --snapshot --rm-dist
+GORELEASER_FLAGS ?= --snapshot --clean --rm-dist
 all: compile check-format lint test
 
 # Variables and Settings
@@ -74,9 +74,29 @@ compile: mod ## Compile for the local architecture ⚙
 # -X 'main.License=$(license)' \
 # -X 'main.Name=$(target)' \
 
+.PHONY: run
+run: ## Run the command with default values
+	@echo "Running...\n"
+	@go run -ldflags "\
+	-s -w \
+	-X '${PKG_LDFLAGS}.Version=$(version)' \
+	-X '${PKG_LDFLAGS}.BuildDate=$(DATE)' \
+	-X '${PKG_LDFLAGS}.Revision=$(COMMIT)'" \
+	./main.go --url "http://neverssl.com/makeSSLgreatAgain" -c 404 -f "assets/mp3/ubuntu_desktop_login.mp3"
+
+.PHONY: version
+version: ## Run the command to get the version
+	@echo "Running to get the command version...\n"
+	@go run -ldflags "\
+	-s -w \
+	-X '${PKG_LDFLAGS}.Version=$(version)' \
+	-X '${PKG_LDFLAGS}.BuildDate=$(DATE)' \
+	-X '${PKG_LDFLAGS}.Revision=$(COMMIT)'" \
+	./main.go version
+
 .PHONY: goreleaser
 goreleaser: ## Run goreleaser directly at the pinned version 🛠
-	go run github.com/goreleaser/goreleaser@v1.14 $(GORELEASER_FLAGS)
+	go run github.com/goreleaser/goreleaser@v1.18.2 $(GORELEASER_FLAGS)
 
 .PHONY: mod
 mod: ## Go mod things
@@ -140,3 +160,4 @@ benchmark: ## Run benchmark tests 🚄
 .PHONY: sec
 sec: ## Golang Security checks code for security problems 🔒
 	gosec ./...
+	govulncheck ./...
