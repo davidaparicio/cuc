@@ -1,5 +1,7 @@
 # Binary generated
 bin/
+# GoReleaser generated
+dist/
 
 # Snyk code
 .dccache

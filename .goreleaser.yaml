@@ -4,8 +4,7 @@ before:
     # - go test -v ./...
     - go generate ./...
 builds:
-  - binary: cuc
-    env:
+  - env:
       - CGO_ENABLED=1
       # linux_syscall.c:67:13: error: implicit declaration of function 
       # 'setresgid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
@@ -38,7 +37,7 @@ builds:
     # use commit date instead of current date as main.date
     # only needed if you actually use those things in your main package, otherwise can be ignored.
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
-    main: ./
+    #main: ./
 archives:
   - id: cuc
     name_template: >-
@@ -76,14 +75,18 @@ dockers:
   - "--label=org.opencontainers.image.source={{.GitURL}}"
 
 docker_signs:
+  #https://goreleaser.com/customization/docker_sign/
   - cmd: cosign
     env:
     - COSIGN_EXPERIMENTAL=1
     artifacts: images
     output: true
     args:
-    - 'sign'
-    - '${artifact}'
+    - "sign"
+    #- "--key=cosign.key"
+    #- "--upload=false"
+    - "${artifact}"
+    - "--yes" # needed on cosign 2.0.0+
 
 brews:
 - name: cuc

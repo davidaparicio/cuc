@@ -38,7 +38,7 @@
 #                                                                              #
 # ---------------------------------------------------------------------------- #
 
-GORELEASER_FLAGS ?= --snapshot --clean --rm-dist
+GORELEASER_FLAGS ?= --snapshot --clean
 all: compile check-format lint test
 
 # Variables and Settings
