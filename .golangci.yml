@@ -63,7 +63,27 @@ linters-settings:
     allow-unused: false # report any unused nolint directives
     require-explanation: false # don't require an explanation for nolint directives
     require-specific: false # don't require nolint directives to be specific about which linter is being skipped
-
+  depguard:
+  # https://golangci-lint.run/usage/linters/#depguard (added 15 July 2023)
+      rules:
+        main:
+          # List of file globs that will match this list of settings to compare against. Default: $all
+          files:
+            - $all #"**/internal/**/*.go"/"!$test"/"!**/*_a _file.go"
+          # List of allowed packages.
+          allow:
+            - $gostd #matches all of go's standard library (Pulled from GOROOT)
+            - github.com/faiface/beep
+            - github.com/spf13/cobra
+            - github.com/davidaparicio/cuc
+          # Packages that are not allowed where the value is a suggestion.
+          deny:
+            - pkg: "reflect"
+              desc: Please don't use reflect package
+            - pkg: "github.com/sirupsen/logrus"
+              desc: Not allowed, please use the Uber Zap library (future zap->slog)
+            - pkg: "github.com/pkg/errors"
+              desc: Should be replaced by standard lib errors package
 linters:
   disable-all: true
   enable:
@@ -98,8 +118,7 @@ linters:
     - unparam
     - unused
     - whitespace
-
-  # don't enable:
+# don't enable:
   # - asciicheck
   # - scopelint
   # - gochecknoglobals
@@ -123,6 +142,14 @@ linters:
   #      - gomnd
 
 run:
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
   timeout: 5m
+  # default concurrency is a available CPU number
+  concurrency: 4
+  # exit code when at least one issue was found, default is 1
+  issues-exit-code: 1
 #  skip-dirs:
 #    - test/testdata_etc # test files
+# revert to go1.17 while the linters are being updated to add support for the
+# generics introduced in go1.18
+# go: '1.19'
