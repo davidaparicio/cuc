@@ -1,6 +1,6 @@
 module github.com/davidaparicio/cuc
 
-go 1.19
+go 1.25.0
 
 require (
 	github.com/faiface/beep v1.1.0
@@ -18,7 +18,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/exp/shiny v0.0.0-20230713183714-613f0c0eb8a1 // indirect
-	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/image v0.38.0 // indirect
 	golang.org/x/mobile v0.0.0-20230531173138-3c911d8e3eda // indirect
 	golang.org/x/sys v0.10.0 // indirect
 )
