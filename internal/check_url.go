@@ -11,8 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/speaker"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 )
@@ -34,7 +32,7 @@ func CheckURL(url, musicFile string, backoff, httpCode int, loop bool, logger *z
 		cancel()
 	}(cancel)
 
-	buffer, err := prepareMusic(musicFile, logger)
+	music, err := prepareMusic(musicFile, logger)
 	if err != nil {
 		logger.Fatal("Unexpected error while executing command:",
 			zap.String("prepareMusic err", err.Error()))
@@ -43,7 +41,6 @@ func CheckURL(url, musicFile string, backoff, httpCode int, loop bool, logger *z
 
 	duration := time.Duration(backoff) * time.Second
 	ticker := time.NewTicker(duration)
-	done := make(chan bool)
 	breaking := false
 	for !breaking {
 		select {
@@ -61,11 +58,7 @@ func CheckURL(url, musicFile string, backoff, httpCode int, loop bool, logger *z
 					zap.Duration("backoff", duration),
 					zap.String("url", url),
 				)
-				music := buffer.Streamer(0, buffer.Len())
-				speaker.Play(beep.Seq(music, beep.Callback(func() {
-					done <- true
-				})))
-				<-done
+				music.Play()
 				if !loop {
 					breaking = true
 				}

@@ -1,33 +1,19 @@
+version: 2
 before:
   hooks:
     - go mod tidy
     # - go test -v ./...
     - go generate ./...
 builds:
-  - env:
+  # Linux needs CGO for the ALSA audio backend (ebitengine/oto/v3),
+  # so this build runs natively on the release runner.
+  - id: cuc-cgo
+    env:
       - CGO_ENABLED=1
-      # linux_syscall.c:67:13: error: implicit declaration of function 
-      # 'setresgid' is invalid in C99 [-Werror,-Wimplicit-function-declaration]
-      # https://github.com/hajimehoshi/oto/issues/144#issuecomment-868458478
-      # - CC="x86_64-linux-musl-gcc"
-      # - CXX="x86_64-linux-musl-g++"
-      # https://words.filippo.io/easy-windows-and-linux-cross-compilers-for-macos/
     goos:
       - linux
-      # - windows
-      # - darwin
-      # https://github.com/goreleaser/goreleaser-action/issues/233
     goarch:
       - amd64
-    #  - arm
-    #  - arm64
-    #  - "386"
-    #goarm:
-    #  - "6"
-    #  - "7"
-    #ignore:
-    #  - goos: darwin
-    #    goarch: "386"
     # ensures mod timestamp to be the commit timestamp
     mod_timestamp: '{{ .CommitTimestamp }}'
     flags:
@@ -37,7 +23,29 @@ builds:
     # use commit date instead of current date as main.date
     # only needed if you actually use those things in your main package, otherwise can be ignored.
       - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
-    #main: ./
+  # Cross-compiled without CGO. Windows keeps full audio support
+  # (ebitengine/oto/v3 is pure Go there); the other targets fall back
+  # to a silent player (internal/music_noaudio.go) but the URL checker
+  # itself is fully functional.
+  - id: cuc-nocgo
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      # linux/amd64 with audio comes from the cuc-cgo build
+      - goos: linux
+        goarch: amd64
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }}
 archives:
   - id: cuc
     name_template: >-
@@ -46,10 +54,13 @@ archives:
           {{- if eq .Arch "amd64" }}x86_64
           {{- else if eq .Arch "386" }}i386
           {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        formats: ['zip']
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
@@ -92,6 +103,6 @@ brews:
 - name: cuc
   # goarm: 6
   homepage: https://github.com/davidaparicio/homebrew-tools
-  tap:
+  repository:
     owner: davidaparicio
     name: homebrew-tools

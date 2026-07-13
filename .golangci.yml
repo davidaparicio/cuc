@@ -73,7 +73,7 @@ linters-settings:
           # List of allowed packages.
           allow:
             - $gostd #matches all of go's standard library (Pulled from GOROOT)
-            - github.com/faiface/beep
+            - github.com/gopxl/beep
             - github.com/spf13/cobra
             - github.com/davidaparicio/cuc
           # Packages that are not allowed where the value is a suggestion.

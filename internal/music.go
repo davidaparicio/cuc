@@ -1,3 +1,5 @@
+//go:build cgo || windows
+
 /*
 Copyright © 2023 David Aparicio david.aparicio@free.fr
 */
@@ -7,9 +9,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/faiface/beep"
-	"github.com/faiface/beep/mp3"
-	"github.com/faiface/beep/speaker"
+	"github.com/gopxl/beep/v2"
+	"github.com/gopxl/beep/v2/mp3"
+	"github.com/gopxl/beep/v2/speaker"
 	"go.uber.org/zap"
 )
 
@@ -17,7 +19,11 @@ const (
 	SpeakerRate = 10
 )
 
-func prepareMusic(musicFile string, logger *zap.Logger) (buffer *beep.Buffer, err error) {
+type beepPlayer struct {
+	buffer *beep.Buffer
+}
+
+func prepareMusic(musicFile string, logger *zap.Logger) (player, error) {
 	// #nosec [G304] [-- Acceptable risk, for the CWE-22]
 	f, err := os.Open(musicFile)
 	if err != nil {
@@ -31,8 +37,6 @@ func prepareMusic(musicFile string, logger *zap.Logger) (buffer *beep.Buffer, er
 		return nil, err
 	}
 
-	// ../../../../go/pkg/mod/github.com/hajimehoshi/oto@v1.0.1/context.go:69:12: undefined: newDriver
-	// To fix this error, we need to enable CGO_ENABLED=1
 	err = speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/SpeakerRate))
 	if err != nil {
 		logger.Warn("Not possible to init the speaker", zap.String("speaker.Init err", err.Error()))
@@ -40,12 +44,21 @@ func prepareMusic(musicFile string, logger *zap.Logger) (buffer *beep.Buffer, er
 	}
 
 	//https://github.com/faiface/beep/wiki/To-buffer,-or-not-to-buffer,-that-is-the-question
-	buffer = beep.NewBuffer(format)
+	buffer := beep.NewBuffer(format)
 	buffer.Append(streamer)
 	err = streamer.Close()
 	if err != nil {
 		logger.Warn("Not possible to close the streamer", zap.String("streamer.Close err", err.Error()))
 		return nil, err
 	}
-	return buffer, nil
+	return &beepPlayer{buffer: buffer}, nil
+}
+
+func (p *beepPlayer) Play() {
+	done := make(chan bool)
+	music := p.buffer.Streamer(0, p.buffer.Len())
+	speaker.Play(beep.Seq(music, beep.Callback(func() {
+		done <- true
+	})))
+	<-done
 }
