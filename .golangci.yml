@@ -31,7 +31,7 @@ linters-settings:
     min-complexity: 15
   goimports:
     local-prefixes: github.com/golangci/golangci-lint
-  gomnd:
+  mnd:
     # don't include the "operation" and "assign"
     checks:
       - argument
@@ -47,7 +47,8 @@ linters-settings:
       - strings.SplitN
 
   govet:
-    check-shadowing: true
+    enable:
+      - shadow
     settings:
       printf:
         funcs:
@@ -76,6 +77,7 @@ linters-settings:
             - github.com/gopxl/beep
             - github.com/spf13/cobra
             - github.com/davidaparicio/cuc
+            - go.uber.org/zap
           # Packages that are not allowed where the value is a suggestion.
           deny:
             - pkg: "reflect"
@@ -92,7 +94,7 @@ linters:
     - dogsled
     - dupl
     - errcheck
-    - exportloopref
+    - copyloopvar
     - funlen
     - gochecknoinits
     - goconst
@@ -100,7 +102,7 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - gomnd
+    - mnd
     - goprintffuncname
     - gosec
     - gosimple
